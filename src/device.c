@@ -355,43 +355,43 @@ static uvc_error_t uvc_open_internal(
   if (ret != UVC_SUCCESS)
     goto fail;
 
-  UVC_DEBUG("claiming control interface %d", internal_devh->info->ctrl_if.bInterfaceNumber);
-  ret = uvc_claim_if(internal_devh, internal_devh->info->ctrl_if.bInterfaceNumber);
-  if (ret != UVC_SUCCESS)
-    goto fail;
+  // UVC_DEBUG("claiming control interface %d", internal_devh->info->ctrl_if.bInterfaceNumber);
+  // ret = uvc_claim_if(internal_devh, internal_devh->info->ctrl_if.bInterfaceNumber);
+  // if (ret != UVC_SUCCESS)
+  //   goto fail;
 
-  libusb_get_device_descriptor(dev->usb_dev, &desc);
-  internal_devh->is_isight = (desc.idVendor == 0x05ac && desc.idProduct == 0x8501);
+  // libusb_get_device_descriptor(dev->usb_dev, &desc);
+  // internal_devh->is_isight = (desc.idVendor == 0x05ac && desc.idProduct == 0x8501);
 
-  if (internal_devh->info->ctrl_if.bEndpointAddress) {
-    internal_devh->status_xfer = libusb_alloc_transfer(0);
-    if (!internal_devh->status_xfer) {
-      ret = UVC_ERROR_NO_MEM;
-      goto fail;
-    }
+  // if (internal_devh->info->ctrl_if.bEndpointAddress) {
+  //   internal_devh->status_xfer = libusb_alloc_transfer(0);
+  //   if (!internal_devh->status_xfer) {
+  //     ret = UVC_ERROR_NO_MEM;
+  //     goto fail;
+  //   }
 
-    libusb_fill_interrupt_transfer(internal_devh->status_xfer,
-                                   usb_devh,
-                                   internal_devh->info->ctrl_if.bEndpointAddress,
-                                   internal_devh->status_buf,
-                                   sizeof(internal_devh->status_buf),
-                                   _uvc_status_callback,
-                                   internal_devh,
-                                   0);
-    ret = libusb_submit_transfer(internal_devh->status_xfer);
-    UVC_DEBUG("libusb_submit_transfer() = %d", ret);
+  //   libusb_fill_interrupt_transfer(internal_devh->status_xfer,
+  //                                  usb_devh,
+  //                                  internal_devh->info->ctrl_if.bEndpointAddress,
+  //                                  internal_devh->status_buf,
+  //                                  sizeof(internal_devh->status_buf),
+  //                                  _uvc_status_callback,
+  //                                  internal_devh,
+  //                                  0);
+  //   ret = libusb_submit_transfer(internal_devh->status_xfer);
+  //   UVC_DEBUG("libusb_submit_transfer() = %d", ret);
 
-    if (ret) {
-      fprintf(stderr,
-              "uvc: device has a status interrupt endpoint, but unable to read from it\n");
-      goto fail;
-    }
-  }
+  //   if (ret) {
+  //     fprintf(stderr,
+  //             "uvc: device has a status interrupt endpoint, but unable to read from it\n");
+  //     goto fail;
+  //   }
+  // }
 
-  if (dev->ctx->own_usb_ctx && dev->ctx->open_devices == NULL) {
-    /* Since this is our first device, we need to spawn the event handler thread */
-    uvc_start_handler_thread(dev->ctx);
-  }
+  // if (dev->ctx->own_usb_ctx && dev->ctx->open_devices == NULL) {
+  //   /* Since this is our first device, we need to spawn the event handler thread */
+  //   uvc_start_handler_thread(dev->ctx);
+  // }
 
   DL_APPEND(dev->ctx->open_devices, internal_devh);
   *devh = internal_devh;
@@ -1796,12 +1796,12 @@ void uvc_process_control_status(uvc_device_handle_t *devh, unsigned char *data, 
                     content, content_len,
                     devh->status_user_ptr);
   }
-  
+
   UVC_EXIT_VOID();
 }
 
 void uvc_process_streaming_status(uvc_device_handle_t *devh, unsigned char *data, int len) {
-  
+
   UVC_ENTER();
 
   if (len < 3) {
@@ -1817,7 +1817,7 @@ void uvc_process_streaming_status(uvc_device_handle_t *devh, unsigned char *data
       return;
     }
     UVC_DEBUG("Button (intf %u) %s len %d\n", data[1], data[3] ? "pressed" : "released", len);
-    
+
     if(devh->button_cb) {
       UVC_DEBUG("Running user-supplied button callback");
       devh->button_cb(data[1],
@@ -1832,7 +1832,7 @@ void uvc_process_streaming_status(uvc_device_handle_t *devh, unsigned char *data
 }
 
 void uvc_process_status_xfer(uvc_device_handle_t *devh, struct libusb_transfer *transfer) {
-  
+
   UVC_ENTER();
 
   /* printf("Got transfer of aLen = %d\n", transfer->actual_length); */

@@ -61,7 +61,7 @@ void cb(uvc_frame_t *frame, void *ptr) {
       IPL_DEPTH_8U,
       3);
 
-  cvSetData(cvImg, bgr->data, bgr->width * 3); 
+  cvSetData(cvImg, bgr->data, bgr->width * 3);
 
   cvNamedWindow("Test", CV_WINDOW_AUTOSIZE);
   cvShowImage("Test", cvImg);
@@ -129,12 +129,12 @@ int main(int argc, char **argv) {
             /* uvc_perror(resPT, "set_pt_abs"); */
             uvc_error_t resEXP = uvc_set_exposure_abs(devh, 20 + i * 5);
             uvc_perror(resEXP, "set_exp_abs");
-            
+
             sleep(1);
           }
           sleep(10);
           uvc_stop_streaming(devh);
-	  puts("Done streaming.");
+      	  puts("Done streaming.");
         }
       }
 
