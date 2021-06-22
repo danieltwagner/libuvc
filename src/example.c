@@ -88,13 +88,14 @@ void cb(uvc_frame_t *frame, void *ptr) {
 int main(int argc, char **argv) {
 
   if (argc < 3) {
-    puts("Must specify brightness (pct) + white balance (kelvin)");
+    printf("Usage: %s brightness_pct white_balance_kelvin [gain, default=200]", argv[0]);
     return 1;
   }
 
   int16_t brightness = atoi(argv[1]);
   uint8_t wb_auto = 0;
   uint16_t wb = 0;
+  uint16_t gain = 200;
 
   if (strcmp(argv[2], "auto") == 0) {
     wb_auto = 1;
@@ -102,6 +103,9 @@ int main(int argc, char **argv) {
   } else {
     wb = atoi(argv[2]);
     printf("Setting brightness = %d%%, white balance = %d K...\n", brightness, wb);
+  }
+  if (argc > 3) {
+    gain = atoi(argv[3]);
   }
 
   uvc_context_t *ctx;
@@ -143,6 +147,11 @@ int main(int argc, char **argv) {
       res = uvc_set_ae_mode(devh, 1);  // manual exposure
       if (res < 0) {
         uvc_perror(res, "set_ae_mode");
+      }
+
+      res = uvc_set_gain(devh, gain);  // gain control
+      if (res < 0) {
+        uvc_perror(res, "set_gain");
       }
 
       res = uvc_set_brightness(devh, brightness);
